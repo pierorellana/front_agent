@@ -1,0 +1,264 @@
+<main class="ai-health-shell">
+  <section class="assistant-dashboard">
+    <aside class="mission-panel" aria-label="Resumen de consulta">
+      <div class="brand-lockup">
+        <span class="brand-mark">AI</span>
+        <div>
+          <p class="eyebrow">Agente Salud</p>
+          <h1>Consulta tu cobertura antes de atenderte</h1>
+        </div>
+      </div>
+
+      <div class="identity-card">
+        <span class="status-pill">Copago inteligente</span>
+        <p>
+          Ingresa tus datos, describe el síntoma y recibe una recomendación económica
+          basada en tu plan.
+        </p>
+      </div>
+
+      <div class="progress-panel">
+        <div class="progress-head">
+          <span>Flujo</span>
+          <strong>{{ progress() }}%</strong>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <span [style.width.%]="progress()"></span>
+        </div>
+        <ol class="flow-list">
+          <li [class.active]="step() === 'identity'" [class.done]="step() !== 'identity'">
+            <span>01</span>
+            Cédula o póliza
+          </li>
+          <li [class.active]="step() === 'symptoms'" [class.done]="step() === 'result'">
+            <span>02</span>
+            Síntomas
+          </li>
+          <li [class.active]="step() === 'result'">
+            <span>03</span>
+            Copago y red
+          </li>
+        </ol>
+      </div>
+
+      <div class="signal-card" aria-hidden="true">
+        <div class="pulse-ring">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="signal-copy">
+          <strong>IA clínica</strong>
+          <span>Notion + FastAPI + Angular</span>
+        </div>
+      </div>
+    </aside>
+
+    <section class="conversation-panel">
+      <div class="panel-topbar">
+        <div>
+          <span class="online-dot"></span>
+          <strong>Asistente de beneficios</strong>
+        </div>
+        <button type="button" class="ghost-action" (click)="resetFlow()">Nueva consulta</button>
+      </div>
+
+      <div #chatThread class="chat-thread" aria-live="polite">
+        @for (message of messages(); track trackByMessage($index, message)) {
+          <article class="message" [class.patient]="message.sender === 'patient'">
+            <span class="message-avatar">{{ message.sender === 'agent' ? 'IA' : 'TU' }}</span>
+            <p>{{ message.text }}</p>
+          </article>
+        }
+
+        @if (isLoading()) {
+          <article class="message">
+            <span class="message-avatar">IA</span>
+            <div class="typing-dots" aria-label="Calculando">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </article>
+        }
+      </div>
+
+      <form class="chat-controls" [formGroup]="form">
+        @if (step() === 'identity') {
+          <label class="input-label" for="documentNumber">Cédula o número de póliza</label>
+          <div class="input-row">
+            <input
+              id="documentNumber"
+              type="text"
+              formControlName="documentNumber"
+              placeholder="0922334455"
+              autocomplete="off"
+            />
+            <button type="button" class="primary-action" (click)="submitDocument()">
+              Iniciar consulta
+            </button>
+          </div>
+          @if (form.controls.documentNumber.touched && form.controls.documentNumber.invalid) {
+            <p class="field-error">Ingresa un identificador válido.</p>
+          }
+        }
+
+        @if (step() !== 'identity') {
+          <label class="input-label" for="symptomText">Describe tu síntoma</label>
+          <div class="quick-symptoms">
+            @for (symptom of quickSymptoms; track symptom.label) {
+              <button type="button" (click)="useQuickSymptom(symptom.text)">
+                {{ symptom.label }}
+              </button>
+            }
+          </div>
+          <div class="input-row">
+            <textarea
+              id="symptomText"
+              rows="2"
+              formControlName="symptomText"
+              placeholder="Tengo dolor de garganta y fiebre."
+            ></textarea>
+            <button
+              type="button"
+              class="primary-action"
+              [disabled]="isLoading()"
+              (click)="submitSymptoms()"
+            >
+              Calcular
+            </button>
+          </div>
+          @if (form.controls.symptomText.touched && form.controls.symptomText.invalid) {
+            <p class="field-error">Cuéntalo con un poco más de detalle.</p>
+          }
+        }
+      </form>
+    </section>
+
+    <section class="insights-panel" aria-label="Resultado inteligente">
+      @if (estimate(); as result) {
+        <div class="result-header">
+          <div>
+            <span class="status-pill success">Resultado inteligente</span>
+            <h2>{{ result.recommendation.hospitalName }}</h2>
+            <p>{{ result.recommendation.explanation }}</p>
+          </div>
+          <div class="ai-route-card" aria-label="Ruta de decisión del agente">
+            <span class="route-kicker">Ruta IA</span>
+            <div class="route-nodes" aria-hidden="true">
+              <span>Síntomas</span>
+              <i></i>
+              <span>Cobertura</span>
+              <i></i>
+              <span>Red</span>
+            </div>
+            <strong>Decisión lista</strong>
+          </div>
+        </div>
+
+        <div class="metric-grid">
+          <article class="metric-card">
+            <span>Especialidad sugerida</span>
+            <strong>{{ result.interpretation.specialtyName }}</strong>
+          </article>
+          <article class="metric-card">
+            <span>Plan</span>
+            <strong>{{ result.patient.planName ?? 'Plan detectado' }}</strong>
+          </article>
+          <article class="metric-card">
+            <span>Cobertura estimada</span>
+            <strong>{{ breakdown()?.coveragePercent ?? 0 }}%</strong>
+          </article>
+          <article class="metric-card accent">
+            <span>Copago estimado</span>
+            <strong>
+              {{ formatMoney(result.recommendation.estimatedPatientPayment, result.recommendation.currency) }}
+            </strong>
+          </article>
+        </div>
+
+        <div class="comparison-card">
+          <div class="section-heading">
+            <span>Hospitales de la red</span>
+            <strong>Comparativa económica</strong>
+          </div>
+
+          <div class="comparison-table" role="table" aria-label="Comparativa de hospitales">
+            <div class="table-row table-head" role="row">
+              <span class="table-hospital" role="columnheader">Hospital</span>
+              <span class="table-copay" role="columnheader">Copago</span>
+              <span class="table-convenience" role="columnheader">Conveniencia</span>
+            </div>
+            @for (hospital of result.comparisons; track trackByHospital($index, hospital)) {
+              <div class="table-row" role="row">
+                <span class="table-cell table-hospital" role="cell" data-label="Hospital">
+                  <strong>{{ hospital.hospitalName }}</strong>
+                  <small>{{ hospital.city ?? 'Red médica' }}</small>
+                </span>
+                <span class="table-cell table-copay" role="cell" data-label="Copago">
+                  {{ formatMoney(hospital.estimatedPatientPayment, hospital.currency) }}
+                </span>
+                <span class="table-cell table-convenience" role="cell" data-label="Conveniencia">
+                  <mark
+                    class="convenience-chip"
+                    [class.best]="hospital.convenienceLabel === 'Mejor opción'"
+                    [class.good]="hospital.convenienceLabel === 'Buena opción'"
+                    [class.costly]="hospital.convenienceLabel === 'Más costoso'"
+                  >
+                    {{ hospital.convenienceLabel }}
+                  </mark>
+                </span>
+              </div>
+            }
+          </div>
+        </div>
+
+        @if (breakdown(); as values) {
+          <div class="calculation-card">
+            <div class="section-heading">
+              <span>Cómo calculamos tu copago</span>
+              <strong>Detalle del cálculo</strong>
+            </div>
+            <dl class="calculation-list">
+              <div>
+                <dt>Tarifa del hospital</dt>
+                <dd>{{ formatMoney(values.hospitalTariff, values.currency) }}</dd>
+              </div>
+              <div>
+                <dt>Cobertura de tu plan</dt>
+                <dd>{{ values.coveragePercent }}%</dd>
+              </div>
+              <div>
+                <dt>Valor cubierto por seguro</dt>
+                <dd>{{ formatMoney(values.coveredAmount, values.currency) }}</dd>
+              </div>
+              <div class="patient-pay">
+                <dt>Valor a pagar por el paciente</dt>
+                <dd>{{ formatMoney(values.patientPayment, values.currency) }}</dd>
+              </div>
+            </dl>
+          </div>
+        }
+
+        @if (result.source === 'demo') {
+          <p class="demo-note">
+            Vista demo activa: el backend no respondió y se muestran datos realistas para la presentación.
+          </p>
+        }
+      } @else {
+        <div class="empty-state">
+          <div class="scanner-visual" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+            <i></i>
+          </div>
+          <h2>Tu recomendación aparecerá aquí</h2>
+          <p>
+            Al terminar el chat, verás especialidad, plan, copago exacto y tabla comparativa.
+          </p>
+        </div>
+      }
+    </section>
+  </section>
+</main>

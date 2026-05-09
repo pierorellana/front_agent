@@ -1,6 +1,40 @@
-# AgenteSalud
+# Agente Salud IA
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.10.
+Frontend Angular para el reto de hackathon: estimador agéntico de copago y cobertura para pacientes.
+
+## Arquitectura
+
+```text
+src/app/
+├── core/
+│   ├── application/     # Casos de uso y servicios de presentación del dominio
+│   ├── config/          # Tokens de configuración
+│   └── domain/          # Entidades y contratos de repositorio
+├── infrastructure/
+│   ├── http/            # DTOs, mappers y repositorio FastAPI
+│   └── mocks/           # Fallback demo para presentación
+└── features/
+    └── copay-assistant/ # Pantalla conversacional y resultado inteligente
+```
+
+## Integración con backend
+
+El frontend consume:
+
+```text
+POST http://localhost:8000/api/care-estimates
+```
+
+Payload:
+
+```json
+{
+  "document_number": "0922334455",
+  "symptom_text": "Tengo dolor de garganta y fiebre."
+}
+```
+
+Si el backend no responde, la UI activa datos demo para poder presentar el flujo completo.
 
 ## Development server
 
