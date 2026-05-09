@@ -17,6 +17,12 @@
         </p>
       </div>
 
+      <button type="button" class="demo-guide-card" (click)="openDemoGuide()">
+        <span>Datos para probar</span>
+        <strong>Pólizas y especialidades</strong>
+        <small>Abre la guía rápida para la demo</small>
+      </button>
+
       <div class="progress-panel">
         <div class="progress-head">
           <span>Flujo</span>
@@ -261,4 +267,76 @@
       }
     </section>
   </section>
+
+  @if (isDemoGuideOpen()) {
+    <div class="modal-backdrop" role="presentation" (click)="closeDemoGuide()">
+      <section
+        class="demo-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="demoGuideTitle"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="modal-head">
+          <div>
+            <span class="status-pill success">Guía de pruebas</span>
+            <h2 id="demoGuideTitle">Datos para probar el agente</h2>
+            <p>
+              Usa una póliza de prueba, elige un síntoma sugerido o escribe uno propio.
+              El agente calculará cobertura, copago y hospital recomendado.
+            </p>
+          </div>
+          <button type="button" class="modal-close" aria-label="Cerrar guía" (click)="closeDemoGuide()">
+            Cerrar
+          </button>
+        </div>
+
+        <div class="demo-modal-grid">
+          <article class="demo-modal-section">
+            <div class="section-heading">
+              <span>Pólizas de prueba</span>
+              <strong>Selecciona una</strong>
+            </div>
+            <div class="policy-list">
+              @for (policy of demoPolicies; track policy) {
+                <button type="button" (click)="useDemoPolicy(policy)">
+                  {{ policy }}
+                </button>
+              }
+            </div>
+            <p class="helper-copy">
+              Al tocar una póliza se carga automáticamente en el campo inicial.
+            </p>
+          </article>
+
+          <article class="demo-modal-section">
+            <div class="section-heading">
+              <span>Especialidades por hospital</span>
+              <strong>Referencia rápida</strong>
+            </div>
+            <div class="hospital-guide-list">
+              @for (hospital of hospitalSpecialtyGuide; track trackByGuideHospital($index, hospital)) {
+                <div class="hospital-guide-item">
+                  <strong>{{ hospital.hospitalName }}</strong>
+                  <div>
+                    @for (specialty of hospital.specialties; track specialty) {
+                      <span>{{ specialty }}</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </article>
+        </div>
+
+        <div class="demo-tip">
+          <strong>Tip para la demo</strong>
+          <p>
+            Prueba con síntomas diferentes para mostrar cómo cambia la especialidad sugerida
+            y cómo se actualiza la comparación económica entre hospitales.
+          </p>
+        </div>
+      </section>
+    </div>
+  }
 </main>

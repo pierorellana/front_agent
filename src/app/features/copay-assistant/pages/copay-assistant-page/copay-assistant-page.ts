@@ -29,6 +29,11 @@ interface QuickSymptom {
   text: string;
 }
 
+interface HospitalSpecialtyGuide {
+  hospitalName: string;
+  specialties: string[];
+}
+
 @Component({
   selector: 'app-copay-assistant-page',
   imports: [ReactiveFormsModule],
@@ -56,6 +61,7 @@ export class CopayAssistantPage {
   protected readonly step = signal<ConsultationStep>('identity');
   protected readonly estimate = signal<CareEstimate | null>(null);
   protected readonly isLoading = signal(false);
+  protected readonly isDemoGuideOpen = signal(false);
   protected readonly messages = signal<ChatMessage[]>([
     {
       id: 1,
@@ -83,6 +89,41 @@ export class CopayAssistantPage {
     {
       label: 'Lesión de rodilla',
       text: 'Me torcí la rodilla, tengo dolor al caminar e inflamación.',
+    },
+  ];
+  protected readonly demoPolicies = ['ACM-1001', 'ACM-1002', 'NOV-2001', 'VIT-3001'];
+  protected readonly hospitalSpecialtyGuide: HospitalSpecialtyGuide[] = [
+    {
+      hospitalName: 'Metro General Hospital',
+      specialties: [
+        'Medicina de Emergencias',
+        'Cardiología',
+        'Neurología',
+        'Neumología',
+        'Gastroenterología',
+        'Medicina General',
+        'Traumatología',
+      ],
+    },
+    {
+      hospitalName: 'City Heart Institute',
+      specialties: ['Cardiología', 'Neumología', 'Medicina de Emergencias'],
+    },
+    {
+      hospitalName: 'NorthCare Hospital',
+      specialties: ['Ortopedia'],
+    },
+    {
+      hospitalName: 'Family Health Clinic',
+      specialties: ['Pediatría', 'Medicina General'],
+    },
+    {
+      hospitalName: 'Vitalia Medical Tower',
+      specialties: ['Gastroenterología'],
+    },
+    {
+      hospitalName: 'South Emergency Center',
+      specialties: ['Medicina de Emergencias', 'Traumatología'],
     },
   ];
 
@@ -136,6 +177,9 @@ export class CopayAssistantPage {
       'agent',
       'Estoy analizando tus síntomas, validando tu cobertura y comparando hospitales disponibles.',
     );
+    symptomControl.reset('');
+    symptomControl.markAsPristine();
+    symptomControl.markAsUntouched();
     this.isLoading.set(true);
 
     this.estimateCare
@@ -159,6 +203,21 @@ export class CopayAssistantPage {
 
   protected useQuickSymptom(symptom: string): void {
     this.form.controls.symptomText.setValue(symptom);
+  }
+
+  protected openDemoGuide(): void {
+    this.isDemoGuideOpen.set(true);
+  }
+
+  protected closeDemoGuide(): void {
+    this.isDemoGuideOpen.set(false);
+  }
+
+  protected useDemoPolicy(policy: string): void {
+    this.form.controls.documentNumber.setValue(policy);
+    this.form.controls.documentNumber.markAsDirty();
+    this.form.controls.documentNumber.markAsTouched();
+    this.closeDemoGuide();
   }
 
   protected resetFlow(): void {
@@ -201,6 +260,10 @@ export class CopayAssistantPage {
 
   protected trackByHospital(_: number, hospital: { hospitalId: string }): string {
     return hospital.hospitalId;
+  }
+
+  protected trackByGuideHospital(_: number, hospital: HospitalSpecialtyGuide): string {
+    return hospital.hospitalName;
   }
 
   private pushMessage(sender: ChatSender, text: string): void {

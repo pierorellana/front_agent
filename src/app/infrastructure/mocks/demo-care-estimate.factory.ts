@@ -8,8 +8,8 @@ export function buildDemoCareEstimate(command: EstimateCareCommand): CareEstimat
   const specialty = inferDemoSpecialty(command.symptomText);
   const comparisons: HospitalComparison[] = [
     {
-      hospitalId: 'hosp_santa_ana',
-      hospitalName: 'Clínica Santa Ana',
+      hospitalId: 'hosp_metro_general',
+      hospitalName: 'Metro General Hospital',
       city: 'Guayaquil',
       inNetwork: true,
       networkStatus: 'In network',
@@ -25,8 +25,8 @@ export function buildDemoCareEstimate(command: EstimateCareCommand): CareEstimat
       convenienceLabel: 'Mejor opción',
     },
     {
-      hospitalId: 'hosp_vida',
-      hospitalName: 'Hospital Vida',
+      hospitalId: 'hosp_city_heart',
+      hospitalName: 'City Heart Institute',
       city: 'Guayaquil',
       inNetwork: true,
       networkStatus: 'In network',
@@ -41,8 +41,8 @@ export function buildDemoCareEstimate(command: EstimateCareCommand): CareEstimat
       convenienceLabel: 'Buena opción',
     },
     {
-      hospitalId: 'hosp_kennedy',
-      hospitalName: 'Centro Médico Kennedy',
+      hospitalId: 'hosp_vitalia',
+      hospitalName: 'Vitalia Medical Tower',
       city: 'Guayaquil',
       inNetwork: true,
       networkStatus: 'In network',

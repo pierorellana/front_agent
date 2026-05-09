@@ -193,6 +193,47 @@ h2 {
   padding: 18px;
 }
 
+.demo-guide-card {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  border: 1px solid rgba(25, 199, 212, 0.22);
+  border-radius: 22px;
+  padding: 16px;
+  color: var(--ink);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(191, 248, 230, 0.56)),
+    repeating-linear-gradient(135deg, rgba(15, 159, 148, 0.08) 0 2px, transparent 2px 12px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  text-align: left;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.demo-guide-card:hover {
+  border-color: rgba(25, 199, 212, 0.5);
+  box-shadow: 0 16px 34px rgba(15, 159, 148, 0.16);
+  transform: translateY(-1px);
+}
+
+.demo-guide-card span {
+  color: var(--teal-dark);
+  font-size: 0.77rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.demo-guide-card strong {
+  font-size: 1.1rem;
+}
+
+.demo-guide-card small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 .identity-card p,
 .result-header p,
 .empty-state p {
@@ -807,6 +848,135 @@ textarea:focus {
   text-transform: none;
 }
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  padding: 20px;
+  background: rgba(16, 32, 31, 0.42);
+  backdrop-filter: blur(14px);
+  animation: riseIn 180ms ease both;
+}
+
+.demo-modal {
+  display: grid;
+  gap: 18px;
+  width: min(920px, 100%);
+  max-height: min(760px, calc(100vh - 40px));
+  overflow: auto;
+  border: 1px solid rgba(25, 199, 212, 0.24);
+  border-radius: 28px;
+  padding: 22px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(238, 252, 247, 0.96)),
+    repeating-linear-gradient(135deg, rgba(15, 159, 148, 0.06) 0 2px, transparent 2px 14px);
+  box-shadow: 0 30px 100px rgba(16, 32, 31, 0.28);
+}
+
+.modal-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: start;
+}
+
+.modal-head > div {
+  display: grid;
+  gap: 10px;
+}
+
+.modal-head p,
+.helper-copy,
+.demo-tip p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.modal-close {
+  border: 1px solid rgba(15, 159, 148, 0.18);
+  border-radius: 999px;
+  padding: 10px 14px;
+  color: var(--teal-dark);
+  background: rgba(255, 255, 255, 0.82);
+  font-weight: 900;
+}
+
+.demo-modal-grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.72fr) minmax(0, 1.28fr);
+  gap: 14px;
+}
+
+.demo-modal-section,
+.demo-tip {
+  display: grid;
+  gap: 14px;
+  border: 1px solid rgba(15, 159, 148, 0.16);
+  border-radius: 22px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.policy-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.policy-list button {
+  min-height: 48px;
+  border: 1px solid rgba(15, 159, 148, 0.18);
+  border-radius: 16px;
+  color: white;
+  background: linear-gradient(135deg, #12302d, var(--teal));
+  font-weight: 900;
+  letter-spacing: 0;
+  transition:
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.policy-list button:hover {
+  box-shadow: 0 14px 28px rgba(15, 159, 148, 0.24);
+  transform: translateY(-1px);
+}
+
+.hospital-guide-list {
+  display: grid;
+  gap: 10px;
+}
+
+.hospital-guide-item {
+  display: grid;
+  gap: 9px;
+  border-radius: 18px;
+  padding: 12px;
+  background: rgba(191, 248, 230, 0.32);
+}
+
+.hospital-guide-item div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.hospital-guide-item span {
+  border-radius: 999px;
+  padding: 6px 9px;
+  color: var(--teal-dark);
+  background: rgba(255, 255, 255, 0.76);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.demo-tip {
+  border-color: rgba(255, 125, 104, 0.2);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 230, 218, 0.42));
+}
+
 .empty-state {
   display: grid;
   place-items: center;
@@ -989,7 +1159,23 @@ textarea:focus {
 
   .input-row,
   .result-header,
-  .metric-grid {
+  .metric-grid,
+  .modal-head,
+  .demo-modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .demo-modal {
+    max-height: calc(100vh - 24px);
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  .modal-close {
+    width: 100%;
+  }
+
+  .policy-list {
     grid-template-columns: 1fr;
   }
 
